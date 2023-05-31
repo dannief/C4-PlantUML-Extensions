@@ -94,7 +94,7 @@ AddNodeTag($DOCKER_IMAGE_TAG, $bgColor="#d7e5fa", $fontColor="black", $legendTex
   $_node($alias, $label, $type, $sprite="datacenter")
 !endprocedure
 
-!procedure K8s($alias="K8s", $label="Kubernetes Cluster", $type="VMware Tanzu", $description="")
+!procedure K8s($alias="K8s", $label="Kubernetes Cluster", $type="Kubernetes", $description="")
   $_node($alias, $label, $type, $description, $sprite="kubernetes")
 !endprocedure
 
