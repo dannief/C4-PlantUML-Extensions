@@ -1,0 +1,113 @@
+' Languages
+!include <tupadr3/devicons2/java>
+!include <tupadr3/devicons2/javascript>
+!include <tupadr3/devicons2/csharp>
+
+' Frontend
+!include <tupadr3/devicons2/react_original>
+!include <tupadr3/devicons2/angularjs>
+!include <tupadr3/devicons2/vuejs>
+
+' Backend
+!include <tupadr3/devicons2/dot_net>
+!include <tupadr3/devicons2/nodejs_wordmark>
+
+' Database
+!include <tupadr3/devicons2/postgresql>
+!include <tupadr3/devicons/msql_server>
+!include <tupadr3/devicons2/mongodb_wordmark>
+
+' Middleware
+!include <tupadr3/devicons2/redis_wordmark>
+!include <tupadr3/devicons2/nginx_original>
+!include <tupadr3/devicons2/tomcat_line>
+
+
+' --- Generic ---
+
+!include <office/security/active_directory>
+
+' file servers e.g. SharePoint
+!include <office/servers/file_server> 
+
+' services from third party vendors
+!include <office/communications/3rd_party_service>
+
+' microservice
+!include <office/concepts/app_part>
+
+' public facing services
+!include <office/services/web_services>
+
+' customer data services
+!include <office/users/user_services>
+
+' web application/portals
+!include <office/sites/my_site>
+
+' internal application/portals
+!include <office/sites/business_connectivity_services>
+
+'mobile appication
+!include <office/devices/cell_phone_generic>
+
+'desktop appication
+!include <office/devices/device_laptop>
+
+'tablet appication
+!include <office/devices/device_tablet_ipad>
+
+' mail server
+!include <office/servers/exchange_2013_mailbox_server>
+
+' single sign on
+!include <office/security/security_access_portal>
+!include <office/security/token_service>
+
+' gateway
+!include <office/devices/ip_gateway>
+
+' web servers
+!include <office/servers/web_server>
+
+' application servers
+!include <office/servers/application_server>
+
+' data centers
+!include <office/servers/datacenter>
+
+' generic server
+!include <office/servers/server_generic>
+
+' sql server
+!include <office/servers/sql_server>
+
+' database server
+!include <office/servers/database_server>
+
+' windows server
+!include <office/servers/windows_server>
+
+' database
+!include <office/databases/database>
+
+' firewall
+!include <office/concepts/firewall>
+
+!include <office/concepts/settings>
+
+!include <office/concepts/web_page>
+
+!include <office/servers/server_farm>
+
+!include <office/servers/application_server>
+
+!include <tupadr3/font-awesome-5/network_wired>
+
+!include <office/concepts/application_web>
+
+!include <office/clouds/cloud>
+
+!include <office/clouds/private_cloud>
+
+!include <office/clouds/public_cloud>
