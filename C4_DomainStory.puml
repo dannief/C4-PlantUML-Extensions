@@ -1,0 +1,249 @@
+@startuml
+
+LAYOUT_LANDSCAPE()
+
+!include <material/account_outline>
+!include <material/account_multiple_outline>
+!include <material/bank>
+!include <material/calendar>
+!include <material/cash>
+!include <material/file_document>
+!include <material/at>
+!include <material/file_account>
+!include <material/folder_outline>
+!include <material/format_list_checks>
+!include <material/information_outline>
+!include <material/laptop>
+!include <material/message_outline>
+!include <material/phone>
+!include <material/settings>
+
+<style>
+{
+  .object, .actor {
+    BackgroundColor: white
+    LineColor: white
+  }
+}
+</style>
+
+hide stereotype
+
+!$DEFAULT_OBJECT_COLOR = "Black"
+!$DEFAULT_ACTOR_COLOR = "Black"
+!$DEFAULT_OBJECT_SCALE = "1"
+!$DEFAULT_ACTOR_SCALE = "1.51"
+
+!function $coalesce($value, $default)
+  !if ($value == "")
+    !return $default
+  !else
+    !return $value
+  !endif
+!endfunction
+
+!unquoted procedure UpdateObjectStyle($scale="", $color="")
+  !$DEFAULT_OBJECT_COLOR = $coalesce($color, $DEFAULT_OBJECT_COLOR)
+  !$DEFAULT_OBJECT_SCALE = $coalesce($scale, $DEFAULT_OBJECT_SCALE)
+!endprocedure
+
+!unquoted procedure UpdateActorStyle($scale="", $color="")
+  !$DEFAULT_ACTOR_COLOR = $coalesce($color, $DEFAULT_ACTOR_COLOR)
+  !$DEFAULT_ACTOR_SCALE = $coalesce($scale, $DEFAULT_ACTOR_SCALE)
+!endprocedure
+
+
+!unquoted procedure DomainElement($stereo, $sprite, $alias, $color, $scale, $label="")
+  !$label = $coalesce($label, $alias)  
+  rectangle "<color:$color><$$sprite{scale=$scale}></color>\r $label" as $alias <<$stereo>>
+!endprocedure
+
+!unquoted procedure Object($sprite, $alias, $label="", $color="", $scale="")
+  !$color = $coalesce($color, $DEFAULT_OBJECT_COLOR)
+  !$scale = $coalesce($scale, $DEFAULT_OBJECT_SCALE)
+  DomainElement(object, $sprite, $alias, $color, $scale, $label)
+!endprocedure
+
+!unquoted procedure Actor($sprite, $alias, $label="", $color="", $scale="")
+  !$color = $coalesce($color, $DEFAULT_ACTOR_COLOR)
+  !$scale = $coalesce($scale, $DEFAULT_ACTOR_SCALE)
+  DomainElement(actor, $sprite, $alias, $color, $scale, $label)
+!endprocedure
+
+' Objects
+
+!unquoted procedure Document($alias, $label="", $color="", $scale="")
+  Object(ma_file_document, $alias, $label, $color, $scale)
+!endprocedure
+
+!unquoted procedure Call($alias, $label="", $color="", $scale="")
+  Object(ma_phone, $alias, $label, $color, $scale)
+!endprocedure
+
+!unquoted procedure Info($alias, $label="", $color="", $scale="")
+  Object(ma_information_outline, $alias, $label, $color, $scale)
+!endprocedure
+
+!unquoted procedure Folder($alias, $label="", $color="", $scale="")
+  Object(ma_folder_outline, $alias, $label, $color, $scale)
+!endprocedure
+
+!unquoted procedure Conversation($alias, $label="", $color="", $scale="")
+  Object(ma_message_outline, $alias, $label, $color, $scale)
+!endprocedure
+
+!unquoted procedure Email($alias, $label="", $color="", $scale="")
+  Object(ma_at, $alias, $label, $color, $scale)
+!endprocedure
+
+!unquoted procedure Calendar($alias, $label="", $color="", $scale="")
+  Object(ma_calendar, $alias, $label, $color, $scale)
+!endprocedure
+
+!unquoted procedure Checklist($alias, $label="", $color="", $scale="")
+  Object(ma_format_list_checks, $alias, $label, $color, $scale)
+!endprocedure
+
+!unquoted procedure Settings($alias, $label="", $color="", $scale="")
+  Object(ma_settings, $alias, $label, $color, $scale)
+!endprocedure
+
+' Actors
+
+!unquoted procedure DomainGroup($alias, $label="", $color="", $scale="")
+  Actor(ma_account_multiple_outline, $alias, $label, $color, $scale)
+!endprocedure
+
+!unquoted procedure DomainPerson($alias, $label="", $color="", $scale="")
+  Actor(ma_account_outline, $alias, $label, $color, $scale)
+!endprocedure
+
+!unquoted procedure DomainSystem($alias, $label="", $color="", $scale="")
+  Actor(ma_laptop, $alias, $label, $color, $scale)
+!endprocedure
+
+
+' Activity
+
+!$lastIndex = 0
+!$index = 1
+
+!procedure increment($offset=1)
+  !$lastIndex = $index
+  !$index = $index + $offset
+!endprocedure
+
+!procedure setIndex($new_index)
+  !$lastIndex = $index
+  !$index = $new_index
+!endprocedure
+
+!function Index($offset=1)
+  !$lastIndex = $index
+  !$index = $lastIndex + $offset
+  !return $lastIndex
+!endfunction
+
+!function LastIndex()
+  !return $lastIndex
+!endfunction
+
+!function SetIndex($new_index, $offset=1)
+  !$lastIndex = $new_index
+  !$index = $new_index + $offset
+  !return $lastIndex
+!endfunction
+
+!$objectCounter = 0
+
+!unquoted procedure $activity($subject, $predicate, $object, $preposition="", $target="", $subjToObjDir="", $objToTargetDir="", $objColor="", $objScale="")
+  !$colonPos = %strpos($object, ":")
+
+  !if ($colonPos >= 0) 
+    !$objLabel = %substr($object, $colonPos + 1)
+    !$objProc = %substr($object, 0, $colonPos)
+    !$objectCounter = $objectCounter + 1
+    !$objAlias = "object" + $objectCounter
+    %invoke_procedure($objProc, $objAlias, $objLabel, $objColor, $objScale)
+  !else
+    !$objAlias = $object      
+  !endif
+
+  !$subToObjRelProc = "Rel_" + $subjToObjDir
+  !$objToTargetProc = "Rel_" + $objToTargetDir
+  !$predicate = "<color:black><back:Cyan><size:16>(" + Index() + ")</size></back></color>" + " " + $predicate
+  %invoke_procedure($subToObjRelProc, $subject, $objAlias, $predicate)
+  !if ($target != "")
+    %invoke_procedure($objToTargetProc, $objAlias, $target, $preposition)
+  !endif
+!endprocedure
+
+!unquoted procedure Activity_U($subject, $predicate, $object, $preposition="", $target="", $color="", $scale="")
+  $activity($subject, $predicate, $object, $preposition, $target, "U", "U", $color, $scale)
+!endprocedure
+
+!unquoted procedure Activity_U_L($subject, $predicate, $object, $preposition="", $target="", $color="", $scale="")
+  $activity($subject, $predicate, $object, $preposition, $target, "U", "L", $color, $scale)
+!endprocedure
+
+!unquoted procedure Activity_U_R($subject, $predicate, $object, $preposition="", $target="", $color="", $scale="")
+  $activity($subject, $predicate, $object, $preposition, $target, "U", "R", $color, $scale)
+!endprocedure
+
+!unquoted procedure Activity_U_D($subject, $predicate, $object, $preposition="", $target="", $color="", $scale="")
+  $activity($subject, $predicate, $object, $preposition, $target, "U", "D", $color, $scale)
+!endprocedure
+
+!unquoted procedure Activity_R($subject, $predicate, $object, $preposition="", $target="", $color="", $scale="")
+  $activity($subject, $predicate, $object, $preposition, $target, "R", "R", $color, $scale)
+!endprocedure
+
+!unquoted procedure Activity_R_D($subject, $predicate, $object, $preposition="", $target="", $color="", $scale="")
+  $activity($subject, $predicate, $object, $preposition, $target, "R", "D", $color, $scale)
+!endprocedure
+
+!unquoted procedure Activity_R_L($subject, $predicate, $object, $preposition="", $target="", $color="", $scale="")
+  $activity($subject, $predicate, $object, $preposition, $target, "R", "L", $color, $scale)
+!endprocedure
+
+!unquoted procedure Activity_R_U($subject, $predicate, $object, $preposition="", $target="", $color="", $scale="")
+  $activity($subject, $predicate, $object, $preposition, $target, "R", "U", $color, $scale)
+!endprocedure
+
+!unquoted procedure Activity_D($subject, $predicate, $object, $preposition="", $target="", $color="", $scale="")
+  $activity($subject, $predicate, $object, $preposition, $target, "D", "D", $color, $scale)
+!endprocedure
+
+!unquoted procedure Activity_D_L($subject, $predicate, $object, $preposition="", $target="", $color="", $scale="")
+  $activity($subject, $predicate, $object, $preposition, $target, "D", "L", $color, $scale)
+!endprocedure
+
+!unquoted procedure Activity_D_U($subject, $predicate, $object, $preposition="", $target="", $color="", $scale="")
+  $activity($subject, $predicate, $object, $preposition, $target, "D", "U", $color, $scale)
+!endprocedure
+
+!unquoted procedure Activity_D_R($subject, $predicate, $object, $preposition="", $target="", $color="", $scale="")
+  $activity($subject, $predicate, $object, $preposition, $target, "D", "R", $color, $scale)
+!endprocedure
+
+!unquoted procedure Activity_L($subject, $predicate, $object, $preposition="", $target="", $color="", $scale="")
+  $activity($subject, $predicate, $object, $preposition, $target, "L", "L", $color, $scale)
+!endprocedure
+
+!unquoted procedure Activity_L_U($subject, $predicate, $object, $preposition="", $target="", $color="", $scale="")
+  $activity($subject, $predicate, $object, $preposition, $target, "L", "U", $color, $scale)
+!endprocedure
+
+!unquoted procedure Activity_L_R($subject, $predicate, $object, $preposition="", $target="", $color="", $scale="")
+  $activity($subject, $predicate, $object, $preposition, $target, "L", "R", $color, $scale)
+!endprocedure
+
+!unquoted procedure Activity_L_D($subject, $predicate, $object, $preposition="", $target="", $color="", $scale="")
+  $activity($subject, $predicate, $object, $preposition, $target, "L", "D", $color, $scale)
+!endprocedure
+
+!unquoted procedure Activity($subject, $predicate, $object, $preposition="", $target="", $color="", $scale="")
+  Activity_R($subject, $predicate, $object, $preposition, $target, $color, $scale)
+!endprocedure
+
+@enduml
