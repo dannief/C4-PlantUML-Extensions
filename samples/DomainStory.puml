@@ -1,0 +1,23 @@
+@startuml
+!include ../C4_DomainStory.puml
+
+UpdateActorStyle(2)
+
+DomainPerson(Customer)
+DomainPerson(Cashier)
+DomainSystem(TicketSystem, Ticket System)
+
+
+Activity(Customer, askes for, "Conversation:reservation (movie, time, quanitity)", from , Cashier, blue, 1.2)
+Activity(Cashier, finds available seats in, Document:Screen Plan, in, TicketSystem)
+Activity_L(Cashier, recommends, Conversation:available seats, to, Customer)
+Activity(Customer, confirms, Conversation:offered seats, to, Cashier)
+Activity(Cashier, marks seats as reserved in, Document:Screen Plan, in TicketSystem)
+Activity_L(TicketSystem, generates, Info:reservation number, for, Cashier)
+Activity_L(Cashier, tells, Conversation:reservation number, to, Customer)
+
+Lay_R(object1, object3)
+Lay_R(object4, object7)
+Lay_R(object5, object6)
+Lay_R(object2, object5)
+@enduml
