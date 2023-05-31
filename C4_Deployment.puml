@@ -1,5 +1,3 @@
-!include C4_Container.puml
-
 !include <logos/kubernetes>
 !include <logos/docker>
 !include KubernetesSprites.puml
