@@ -1,0 +1,43 @@
+@startuml
+
+!include ../C4_Deployment.puml
+
+LAYOUT_LANDSCAPE()
+
+K8s() {
+
+	K8s_Namespace(Ns, Web) {
+    
+    	K8s_Ingress_Icon(Ing, Ingress)
+        
+        K8s_Service_Icon(Svc1, Service 1)
+        
+        K8s_Pod_Icon(Pod1, Pod 1)
+        
+        K8s_Pod_Icon(Pod2, Pod 2)
+    
+    	K8s_Service_Icon(Svc2, Service 2)
+        
+        K8s_Pod_Icon(Pod3, Pod 3)
+        
+        K8s_Pod_Icon(Pod4, Pod 4)
+    }
+
+}
+
+
+Rel_R(Ing, Svc1, "")
+
+Rel_R(Ing, Svc2, "")
+
+Rel_R(Svc1, Pod1, "")
+
+Rel_R(Svc1, Pod2, "")
+
+Rel_R(Svc2, Pod3, "")
+
+Rel_R(Svc2, Pod4, "")
+
+
+SHOW_FLOATING_LEGEND()
+@enduml
