@@ -1,0 +1,235 @@
+!include C4_Context.puml
+
+!$MICROSERVICE_TAG = "microservice"
+!$MICROSERVICE_EXT_TAG = "external_microservice"
+!$SERVICE_TAG = "service"
+!$SERVICE_EXT_TAG = "external_service"
+!$STORAGE_TAG = "storage"
+!$STORAGE_EXT_TAG = "external_storage"
+!$EXISTING_TAG = "existing_container"
+
+!$ESB_TAG = "via_esb"
+!$GATEWAY_TAG = "via_gateway"
+!$FIREWALL_TAG = "via_firewall"
+!$MODULE_TAG = "module"
+
+!$ESB_LINE_COLOR = "#20A292"
+!$ESB_TEXT_COLOR = "#3d5855"
+!$ESB_SPRITE =  "service_bus"
+!$ESB_SPRITE_DEF =  $ESB_SPRITE + ",color=" + $ESB_LINE_COLOR
+!$ESB_SPRITE_LEGEND =  $ESB_SPRITE + ",scale=.51,color=" + $ESB_LINE_COLOR
+
+!$FIREWALL_LINE_COLOR = "#f93943"
+!$FIREWALL_TEXT_COLOR = "#6d4042"
+!$FIREWALL_SPRITE = "firewall"
+!$FIREWALL_SPRITE_DEF = $FIREWALL_SPRITE + ",scale=.51,color=" + $FIREWALL_LINE_COLOR
+!$FIREWALL_SPRITE_LEGEND = $FIREWALL_SPRITE + ",scale=.35,color=" + $FIREWALL_LINE_COLOR
+
+!$GATEWAY_LINE_COLOR = "#c89933"
+!$GATEWAY_TEXT_COLOR = "#5c5443"
+!$GATEWAY_SPRITE =  "api_gateway"
+!$GATEWAY_SPRITE_DEF =  $GATEWAY_SPRITE + ",color=" + $GATEWAY_LINE_COLOR
+!$GATEWAY_SPRITE_LEGEND =  $GATEWAY_SPRITE + ",scale=.51,color=" + $GATEWAY_LINE_COLOR
+
+!$MODULE_BGCOLOR = "#99C24D"
+!$MODULE_BORDERCOLOR = "#8CB53E"
+
+AddContainerTag($MICROSERVICE_TAG, $shape=EightSidedShape())
+AddExternalContainerTag($MICROSERVICE_EXT_TAG, $shape=EightSidedShape())
+AddContainerTag($SERVICE_TAG, $shape=EightSidedShape())
+AddExternalContainerTag($SERVICE_EXT_TAG, $shape=EightSidedShape())
+AddContainerTag($STORAGE_TAG, $shape=RoundedBoxShape())
+AddExternalContainerTag($STORAGE_EXT_TAG, $shape=RoundedBoxShape())
+AddContainerTag($EXISTING_TAG, $bgColor="aliceblue", $fontColor="steelblue", $borderColor=$CONTAINER_BORDER_COLOR)
+AddContainerTag($MODULE_TAG, $bgColor=$MODULE_BGCOLOR, $borderColor=$MODULE_BORDERCOLOR)
+
+AddRelTag($ESB_TAG, $lineColor=$ESB_LINE_COLOR, $textColor=$ESB_TEXT_COLOR, $sprite=$ESB_SPRITE_DEF, $legendText="via ESB", $legendSprite=$ESB_SPRITE_LEGEND)
+AddRelTag($GATEWAY_TAG, $lineColor=$GATEWAY_LINE_COLOR, $textColor=$GATEWAY_TEXT_COLOR, $sprite=$GATEWAY_SPRITE_DEF, $legendText="via Gateway", $legendSprite=$GATEWAY_SPRITE_LEGEND)
+AddRelTag($FIREWALL_TAG, $lineColor=$FIREWALL_LINE_COLOR, $textColor=$FIREWALL_TEXT_COLOR, $sprite=$FIREWALL_SPRITE_DEF, $legendText="via Firewall", $legendSprite=$FIREWALL_SPRITE_LEGEND)
+
+!procedure $_relHelper($from, $to, $label, $technology="", $description="", $sprite="", $tags ="", $otherTags="", $link="", $dir="")
+  !$proc = "Rel"
+  !if ($dir != "")
+    !$proc = $proc + "_" + $dir
+  !endif
+  !$allTags = $_combineTags($tags, $otherTags)
+  %invoke_procedure($proc, $from, $to, $label, $technology, $description, $sprite, $allTags, $link)
+!endprocedure
+
+!procedure Rel_ESB($from, $to, $label, $technology="", $description="", $tags ="", $link="", $dir="") 
+  $_relHelper($from, $to, $label, $technology, $description, $tags=$tags, $otherTags=$ESB_TAG, $link=$link, $dir=$dir)
+!endprocedure
+
+!procedure Rel_Gateway($from, $to, $label, $technology="", $description="", $tags ="", $link="", $dir="")  
+  $_relHelper($from, $to, $label, $technology, $description, $tags=$tags, $otherTags=$GATEWAY_TAG, $link=$link, $dir=$dir)
+!endprocedure
+
+!procedure Rel_Firewall($from, $to, $label, $technology="", $description="", $tags ="", $link="", $dir="")  
+  $_relHelper($from, $to, $label, $technology, $description, $tags=$tags, $otherTags=$FIREWALL_TAG, $link=$link, $dir=$dir)
+!endprocedure
+
+
+!function $_sprite_java() !return "java|Java, REST"
+!function $_sprite_springboot() !return "springboot2|Java, Spring Boot, REST"
+!function $_sprite_csharp() !return "csharp|C#, DotNET"
+!function $_sprite_dotnetcore() !return "dot_net|C#, DotNET Core, REST"
+
+!function $_sprite_postgresql() !return "postgresql|PostgreSQL"
+!function $_sprite_oracle() !return "oracle|Oracle Database"
+!function $_sprite_msqlserver() !return "msql_server|Microsoft SQL Server"
+!function $_sprite_mongodb() !return "mongodb_wordmark|Mongodb"
+
+!function $_sprite_react() !return "react_original|JavaScript, React"
+!function $_sprite_angularjs() !return "angularjs|JavaScript, AngularJS"
+!function $_sprite_vuejs() !return "vuejs|JavaScript, Vuejs"
+
+
+!function $_getSprite($type) 
+  !$spriteAndTech = %call_user_func("$_sprite_"+$type)
+  !$delimPos = %strpos($spriteAndTech, "|")
+  !$sprite = %substr($spriteAndTech, 0, $delimPos)
+  !return $sprite
+!endfunction
+
+!function $_getTech($technology, $type) 
+  !if ($technology != "")
+    !return $technology
+  !endif
+
+  !$spriteAndTech = %call_user_func("$_sprite_"+$type)
+  !$delimPos = %strpos($spriteAndTech, "|")
+  !$tech = %substr($spriteAndTech, $delimPos+1)
+  !return $tech
+!endfunction
+
+!function $_getTags($userTags, $isExisting=%false(), $isMicroservice=%false(), $isStorage=%false(), $isExternal=%false(), $isService=%false())
+  !$tag1 = $userTags
+  !$tag2 = ""
+  !$tag3 = ""
+
+  !if ($isExisting == %true())
+    !$tag2 = $EXISTING_TAG
+  !endif
+
+  !if ($isMicroservice == %true())
+    !if ($isExternal == %true())
+      !$tag3 = $MICROSERVICE_EXT_TAG
+    !else
+      !$tag3 = $MICROSERVICE_TAG
+    !endif
+  !elseif ($isService == %true())
+    !if ($isExternal == %true())
+      !$tag3 = $SERVICE_EXT_TAG
+    !else
+      !$tag3 = $SERVICE_TAG
+    !endif
+  !elseif ($isStorage == %true())
+    !if ($isExternal == %true())
+      !$tag3 = $STORAGE_EXT_TAG
+    !else
+      !$tag3 = $STORAGE_TAG
+    !endif
+  !endif
+  
+  !return $_combineTags($tag1, $tag2, $tag3)
+!endfunction
+
+
+' --- Generic Containers ---
+
+!procedure Microservice($alias, $label, $technology, $description="", $tags="",$link="", $isExisting=%false(), $sprite="app_part", $isExternal=%false())
+  Container($alias, $label, $technology, $description, $sprite, $tags=$_getTags($tags, $isExisting, %true(), $isExternal=$isExternal), $link)
+!endprocedure
+
+!procedure PublicFacingMicroservice($alias, $label, $technology, $description="", $tags="",$link="", $isExisting=%false(), $isExternal=%false())
+  Container($alias, $label, $technology, $description, $sprite="web_services", $tags=$_getTags($tags, $isExisting, %true(), $isExternal=$isExternal), $link)
+!endprocedure
+
+!procedure Service($alias, $label, $technology, $description="", $tags="",$link="", $isExisting=%false(), $sprite="settings", $isExternal=%false())
+  Container($alias, $label, $technology, $description, $sprite, $tags=$_getTags($tags, $isExisting, $isService=%true(), $isExternal=$isExternal), $link)
+!endprocedure
+  
+!procedure WebApplication($alias, $label, $technology, $description="", $tags="",$link="", $isExisting=%false(), $isExternal=%false())
+  Container($alias, $label, $technology, $description, $sprite="my_site", $tags=$_getTags($tags, $isExisting, $isExternal=$isExternal), $link)
+!endprocedure
+
+!procedure MobileApplication($alias, $label, $technology, $description="", $tags="",$link="", $isExisting=%false(), $isExternal=%false())
+  Container($alias, $label, $technology, $description, $sprite="cell_phone_generic", $tags=$_getTags($tags, $isExisting, $isExternal=$isExternal), $link)
+!endprocedure
+
+!procedure Storage($alias, $label, $technology, $description="", $sprite="", $tags="",$link="", $isExisting=%false(), $isExternal=%false())
+  Container($alias, $label, $technology, $description, $sprite, $tags=$_getTags($tags, $isExisting, $isStorage=%true(), $isExternal=$isExternal), $link)
+!endprocedure
+
+' --- Specific Container Types ---
+
+!procedure $TypedContainerDb($alias, $type, $label, $description="", $technology="", $tags="",$link="", $isExisting=%false(), $isExternal=%false())
+  !if ($isExternal == %true())
+    ContainerDb_Ext($alias, $label, $_getTech($technology, $type), $description, $_getSprite($type), $_getTags($tags, $isExisting), $link)
+  !else
+    ContainerDb($alias, $label, $_getTech($technology, $type), $description, $_getSprite($type), $_getTags($tags, $isExisting), $link)
+  !endif
+!endprocedure
+  
+!procedure $TypedContainer($alias, $type, $label, $description="", $technology="", $tags="",$link="", $isExisting=%false(), $isMicroservice=%false(), $isStorage=%false(), $isExternal=%false()) 
+  !if ($isExternal == %true())
+    Container_Ext($alias, $label, $_getTech($technology, $type), $description, $_getSprite($type), $_getTags($tags, $isExisting, $isMicroservice, $isStorage), $link)
+   !else
+    Container($alias, $label, $_getTech($technology, $type), $description, $_getSprite($type), $_getTags($tags, $isExisting, $isMicroservice, $isStorage), $link)
+  !endif
+!endprocedure
+
+!procedure PostgreSQLDb($alias, $label, $description="", $technology="", $tags="",$link="", $isExisting=%false(), $isExternal=%false())
+  $TypedContainerDb($alias, "postgresql", $label, $description, $technology, $tags, $link, $isExisting, $isExternal)
+!endprocedure
+
+!procedure MsSQLDb($alias, $label, $description="", $technology="", $tags="",$link="", $isExisting=%false(), $isExternal=%false())
+  $TypedContainerDb($alias, "msqlserver", $label, $description, $technology, $tags, $link, $isExisting, $isExternal)
+!endprocedure
+
+!procedure OracleDb($alias, $label, $description="", $technology="", $tags="",$link="", $isExisting=%false(), $isExternal=%false())
+  $TypedContainerDb($alias, "oracle", $label, $description, $technology, $tags, $link, $isExisting, $isExternal)
+!endprocedure
+
+!procedure MongoDb($alias, $label, $description="", $technology="", $tags="",$link="", $isExisting=%false(), $isExternal=%false())
+  $TypedContainerDb($alias, "mongodb", $label, $description, $technology, $tags, $link, $isExisting, $isExternal)
+!endprocedure
+
+!procedure SpringBoot($alias, $label, $description="", $technology="", $tags="",$link="", $isExisting=%false(), $isMicroservice=%false(), $isExternal=%false())
+ $TypedContainer($alias, "springboot", $label, $description, $technology, $tags, $link, $isExisting, $isMicroservice, %false(), $isExternal)
+!endprocedure
+
+!procedure DotNetCore($alias, $label, $description="", $technology="",  $tags="",$link="", $isExisting=%false(), $isMicroservice=%false(), $isExternal=%false())
+ $TypedContainer($alias, "dotnetcore", $label, $description, $technology, $tags, $link, $isExisting, $isMicroservice, %false(), $isExternal)
+!endprocedure
+
+!procedure Java($alias, $label, $description="", $technology="", $tags="",$link="", $isExisting=%false(), $isMicroservice=%false(), $isExternal=%false())
+ $TypedContainer($alias, "java", $label, $description, $technology, $tags, $link, $isExisting, $isMicroservice, %false(), $isExternal)
+!endprocedure
+
+!procedure React($alias, $label, $description="", $technology="",  $tags="",$link="", $isExisting=%false(), $isMicroservice=%false(), $isExternal=%false())
+ $TypedContainer($alias, "react", $label, $description, $technology, $tags, $link, $isExisting, $isMicroservice, %false(), $isExternal)
+!endprocedure
+
+!procedure AngularJs($alias, $label, $description="", $technology="", $tags="",$link="", $isExisting=%false(), $isMicroservice=%false(), $isExternal=%false())
+ $TypedContainer($alias, "angularjs", $label, $description, $technology, $tags, $link, $isExisting, $isMicroservice, %false(), $isExternal)
+!endprocedure
+
+!procedure VueJs($alias, $label, $description="", $technology="", $tags="",$link="", $isExisting=%false(), $isMicroservice=%false(), $isExternal=%false())
+ $TypedContainer($alias, "vuejs", $label, $description, $technology, $tags, $link, $isExisting, $isMicroservice, %false(), $isExternal)
+!endprocedure
+
+' --- Other ---
+
+'Module'
+!procedure Module($alias, $label, $tech, $description="", $sprite="", $link="")
+  Container($alias, $label, $tech, $description, $sprite, $MODULE_TAG, $link)
+!endprocedure
+
+!procedure ModuleDb($alias, $label, $tech, $description="", $sprite="", $link="")
+  ContainerDb($alias, $label, $tech, $description, $sprite, $MODULE_TAG, $link)
+!endprocedure
+
+!procedure ModuleQueue($alias, $label, $tech, $description="", $sprite="" ,$link="")
+  ContainerQueue($alias, $label, $tech, $description, $sprite, $MODULE_TAG, $link)
+!endprocedure
