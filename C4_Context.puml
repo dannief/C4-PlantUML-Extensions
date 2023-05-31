@@ -1,0 +1,41 @@
+!procedure $_createElement($element, $alias, $label, $description, $sprite, $tags, $link, $isExternal)
+  !$ext = ""
+  !$ele = $element
+  !if ($isExternal == %true())
+    !$ext = "_Ext"
+  !endif
+  !$ele = $ele + $ext
+  %invoke_procedure($ele, $alias, $label, $description, $sprite, $tags, $link)
+!endprocedure
+
+!procedure $_createSystem($alias, $name, $description="", $sprite="", $tags="", $link="", $isExternal=%true())
+   $_createElement("System", $alias, $name, $description, $sprite, $tags, $link, $isExternal)
+!endprocedure
+
+!function $_combineTags($tag1, $tag2, $tag3="") 
+  !$retVal = ""
+  !if ($tag1 != "") 
+    !$retVal = $tag1
+  !endif
+  !if ($tag2 != "")
+    !if ($retVal != "") 
+      !$retVal = $retVal + "+" + $tag2  
+    !else
+      !$retVal = $tag2  
+    !endif
+  !endif
+  !if ($tag3 != "") 
+    !if ($retVal != "") 
+      !$retVal = $retVal + "+" + $tag3  
+    !else
+      !$retVal = $tag3  
+    !endif
+  !endif
+  !return $retVal
+!endfunction
+
+AddElementTag("third_party_system", $bgColor="#333333", $fontColor=$ELEMENT_FONT_COLOR)
+
+!procedure System_ThirdParty($alias, $name="", $description="", $sprite="3rd_party_service", $link="") 
+  $_createSystem($alias, $name, $description, $sprite, $tags="third_party_system",  $link="")
+!endprocedure
