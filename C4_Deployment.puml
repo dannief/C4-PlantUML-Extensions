@@ -1,0 +1,222 @@
+!include C4_Container.puml
+
+!include <logos/kubernetes>
+!include <logos/docker>
+!include KubernetesSprites.puml
+
+!$K8S_TAG = "k8s"
+!$DELIVER_WEB_APP_TAG = "deliver_web_app"
+
+!$_SHOW_NODE_SPRITES = %true()
+!$DEFAULT_NODE_SPRITE_SCALE = .4
+!$DEFAULT_ICON_SPRITE_SCALE = 1
+!$DEFAULT_ICON_SPRITE_COLOR = "blue"
+
+AddRelTag($DELIVER_WEB_APP_TAG, $lineColor="blue", $textColor="blue", $legendText="deliver web app", $sprite="web_page{scale=.4}")
+
+AddNodeTag($K8S_TAG, $bgColor="eeeeee", $fontColor="black", $legendText="Kubernetes")
+
+AddNodeTag($DOCKER_IMAGE_TAG, $bgColor="#d7e5fa", $fontColor="black", $legendText="docker base image")
+
+!unquoted procedure HIDE_NODE_SPRITES()
+  !$_SHOW_NODE_SPRITES = %false()
+!endprocedure
+
+!unquoted function $_getNodeSprite($sprite, $scale)
+  !$theSprite = ""
+  !$theScale = $DEFAULT_NODE_SPRITE_SCALE
+
+  !if ($scale > 0)
+    !$theScale = $scale
+  !endif
+
+  !if ($_SHOW_NODE_SPRITES == %true())
+    !if ($sprite != "")
+      !$theSprite = $sprite + "{scale=" + %string($theScale) + "}"
+    !endif
+  !endif
+
+  !return $theSprite
+!endfunction
+
+!unquoted procedure $_node($alias, $label, $type="", $description="", $sprite="", $tags="", $link="", $spriteScale=0)
+  !$theSprite = $_getNodeSprite($sprite, $spriteScale)
+
+  Node($alias, $label, $type, $description, $theSprite, $tags, $link)
+!endprocedure
+
+!unquoted procedure $_iconNode($alias, $label, $type="", $description="", $sprite="", $tags="", $link="", $spriteScale=0, $spriteColor="")
+ 
+  !if ($sprite != "")
+    !if ($spriteScale <= 0)
+      !$spriteScale = $DEFAULT_ICON_SPRITE_SCALE
+    !endif
+
+    !if ($spriteColor == "")
+      !$spriteColor = $DEFAULT_ICON_SPRITE_COLOR
+    !endif
+
+    !$sprite = $sprite + "{scale=" + %string($spriteScale) + ",color=" + $spriteColor + "}"
+    
+  !endif
+
+  card "<$$sprite>\n===$label\n<size:12><i>[$type]\n$description" as $alias <<iconNode>> #white;line:white
+!endprocedure
+
+!unquoted procedure $_server($serverType, $alias, $label, $type, $description, $numberOfServers=1, $tags="", $link="", $spriteScale=0)
+  !$theLabel = $label
+  !if ($numberOfServers > 1)
+    !$theLabel = $theLabel + " <color:blue>X" + $numberOfServers
+  !endif
+
+  !$sprite = "server_generic"
+
+  !if ($serverType == "application")
+    !$sprite = "application_server"
+  !elseif ($serverType == "file")
+    !$sprite = "file_server"
+  !elseif ($serverType == "web")
+    !$sprite = "web_server"
+  !elseif ($serverType == "database")
+    !$sprite = "database_server"
+  !endif
+
+  $_node($alias, $theLabel, $type, $description, $sprite, $tags, $link, $spriteScale)
+!endprocedure
+
+!procedure Internet()
+  $_node(Internet, "Internet", $sprite="public_cloud")
+!endprocedure
+
+!procedure Intranet($type="", $description="")
+  $_node("Intranet", "<size:16>Intranet", $type, $description, $sprite="network_wired")
+!endprocedure
+
+!procedure DataCentre($alias="DataCentre", $label="Data Centre", $type="")
+  $_node($alias, $label, $type, $sprite="datacenter")
+!endprocedure
+
+!procedure K8s($alias="K8s", $label="Kubernetes Cluster", $type="VMware Tanzu", $description="")
+  $_node($alias, $label, $type, $description, $sprite="kubernetes")
+!endprocedure
+
+!procedure K8s_Pod($alias, $label, $type="Pod", $description="")
+  $_node($alias, $label, $type, $description, $sprite="pod")
+!endprocedure
+
+!procedure K8s_Deployment($alias, $label, $type="Deployment", $description="")
+  $_node($alias, $label, $type, $description, $sprite="deploy")
+!endprocedure
+
+!procedure K8s_Service($alias, $label, $type="Service", $description="")
+  $_node($alias, $label, $type, $description, $sprite="svc")
+!endprocedure
+
+!procedure K8s_Ingress($alias, $label, $type="Ingress", $description="")
+  $_node($alias, $label, $type, $description, $sprite="ing")
+!endprocedure
+
+!unquoted procedure K8s_Pod_Icon($alias, $label, $type="Pod", $description="")
+  $_iconNode($alias, $label, $type, $description, $sprite="pod")
+!endprocedure
+
+!unquoted procedure K8s_Deployment_Icon($alias, $label, $type="Deployment", $description="")
+  $_iconNode($alias, $label, $type, $description, $sprite="deploy")
+!endprocedure
+
+!unquoted procedure K8s_Service_Icon($alias, $label, $type="Service", $description="")
+  $_iconNode($alias, $label, $type, $description, $sprite="svc")
+!endprocedure
+
+!unquoted procedure K8s_Ingress_Icon($alias, $label, $type="Ingress", $description="")
+  $_iconNode($alias, $label, $type, $description, $sprite="ing")
+!endprocedure
+
+!procedure K8s_Namespace_Icon($alias, $label, $type="Namespace", $description="")
+  $_iconNode($alias, $label, $type, $description, $sprite="ns")
+!endprocedure
+
+!procedure K8s_Volume_Icon($alias, $label, $type="Volume", $description="")
+  $_iconNode($alias, $label, $type, $description, $sprite="vol")
+!endprocedure
+
+!procedure K8s_CronJob_Icon($alias, $label, $type="Cron Job", $description="")
+  $_iconNode($alias, $label, $type, $description, $sprite="cronjob")
+!endprocedure
+
+!procedure K8s_ReplicaSet_Icon($alias, $label, $type="Replica Set", $description="")
+  $_iconNode($alias, $label, $type, $description, $sprite="rs")
+!endprocedure
+
+!procedure K8s_HPA_Icon($alias, $label, $type="Horizontal Pod Autoscaling", $description="")
+  $_iconNode($alias, $label, $type, $description, $sprite="hpa")
+!endprocedure
+
+!procedure K8s_Limits_Icon($alias, $label, $type="Limits", $description="")
+  $_iconNode($alias, $label, $type, $description, $sprite="limits")
+!endprocedure
+
+!procedure K8s_Namespace($alias, $label, $type="Namespace", $description="")
+  $_node($alias, $label, $type, $description, $sprite="ns")
+!endprocedure
+
+!procedure Device_Laptop($alias, $label, $type="PC, tablet, mobile", $description="")
+  $_node($alias, $label, $type, $description, $sprite="device_laptop")
+!endprocedure
+
+!procedure Device_Tablet($alias, $label, $type="Tablet", $description="")
+  $_node($alias, $label, $type, $description, $sprite="device_tablet_ipad")
+!endprocedure
+
+!procedure Device_Phone($alias, $label, $type="Phone", $description="")
+  $_node($alias, $label, $type, $description, $sprite="cell_phone_generic")
+!endprocedure
+
+!procedure Device($alias, $label, $type="", $description="")
+  Device_Laptop($alias, $label, $type, $description)
+!endprocedure
+
+!procedure WebBrowser($alias, $label, $type="Modern Browsers", $description="")
+  $_node($alias, $label, $type, $description, $sprite="application_web")
+!endprocedure
+
+!procedure Ambassador()
+  Container_Ext(Ambassador, "Ambassador Gateway Application", "Ambassador")
+!endprocedure
+
+!procedure Server($alias, $label, $type="Server", $description="", $numberOfServers=1)
+  $_server("generic", $alias, $label, $type, $description, $numberOfServers)
+!endprocedure
+
+!procedure Server_Application($alias, $label, $type="Application Server", $description="", $numberOfServers=1)
+  $_server("application", $alias, $label, $type, $description, $numberOfServers)
+!endprocedure
+
+!procedure Server_File($alias, $label, $type="File Server", $description="File Server", $numberOfServers=1)
+  $_server("file", $alias, $label, $type, $description, $numberOfServers)
+!endprocedure
+
+!procedure Server_Web($alias, $label, $type="Web Server", $description="Web Server", $numberOfServers=1)
+  $_server("web", $alias, $label, $type, $description, $numberOfServers)
+!endprocedure
+
+!procedure Server_Database($alias, $label, $type="Database Server", $description="Database Server", $numberOfServers=1)
+  $_server("database", $alias, $label, $type, $description, $numberOfServers)
+!endprocedure
+
+!procedure Database($alias, $label, $description="", $showSprite=1)
+  !$sprite = ""
+  !if ($showSprite == %true())
+    !$sprite = "database"
+  !endif
+
+  $_node($alias, $label, "Database", $description, $sprite)
+!endprocedure
+
+!procedure BaseImage($alias, $label, $description="")
+  $_node($alias, $label, "Docker Base Image",  $description, $sprite="docker", $tags=$DOCKER_IMAGE_TAG)
+!endprocedure
+
+!procedure Rel_DeliverWeb($from, $to, $label, $technology="", $description="", $tags ="", $link="", $dir="")  
+  $_relHelper($from, $to, $label, $technology, $description, $tags=$tags, $otherTags=$DELIVER_WEB_APP_TAG, $link=$link, $dir=$dir)
+!endprocedure
