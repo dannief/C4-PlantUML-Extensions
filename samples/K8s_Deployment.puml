@@ -1,6 +1,6 @@
 @startuml
 
-!include ../C4_Deployment.puml
+!include https://raw.githubusercontent.com/dannief/C4-PlantUML-Extensions/main/C4_Deployment.puml
 
 LAYOUT_LANDSCAPE()
 

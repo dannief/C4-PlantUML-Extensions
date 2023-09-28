@@ -1,5 +1,5 @@
 @startuml
-!include ../C4_DomainStory.puml
+!include https://raw.githubusercontent.com/dannief/C4-PlantUML-Extensions/main/C4_DomainStory.puml
 
 UpdateActorStyle(2)
 

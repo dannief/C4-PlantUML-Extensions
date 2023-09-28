@@ -1,4 +1,9 @@
-!include C4_Context.puml
+' convert it with additional command line argument -DRELATIVE_INCLUDE="relative/absolute" to use locally
+!if %variable_exists("RELATIVE_INCLUDE")
+  !include ./C4_Context.puml
+!else
+  !include https://raw.githubusercontent.com/dannief/C4-PlantUML-Extensions/main/C4_Context.puml
+!endif
 
 !$MICROSERVICE_TAG = "microservice"
 !$MICROSERVICE_EXT_TAG = "external_microservice"

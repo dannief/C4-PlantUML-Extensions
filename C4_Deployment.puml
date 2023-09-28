@@ -1,6 +1,12 @@
 !include <logos/kubernetes>
 !include <logos/docker>
-!include KubernetesSprites.puml
+
+' convert it with additional command line argument -DRELATIVE_INCLUDE="relative/absolute" to use locally
+!if %variable_exists("RELATIVE_INCLUDE")
+  !include ./KubernetesSprites.puml
+!else
+  !include https://raw.githubusercontent.com/dannief/C4-PlantUML-Extensions/main/KubernetesSprites.puml
+!endif
 
 !$K8S_TAG = "k8s"
 !$DELIVER_WEB_APP_TAG = "deliver_web_app"
